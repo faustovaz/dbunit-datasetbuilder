@@ -29,4 +29,8 @@ public class ModelBuilder {
 		return new NotAModel();
 	}
 	
+	public static ModelWithNoTableName aModelWithNoTableName(){
+		return new ModelWithNoTableName();
+	}
+	
 }

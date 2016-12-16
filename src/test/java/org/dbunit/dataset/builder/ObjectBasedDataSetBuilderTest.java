@@ -30,5 +30,10 @@ public class ObjectBasedDataSetBuilderTest {
 		builder.build();
 	}
 	
-
+	@Test
+	public void ensurePresenceOfTableName() throws DataSetException{
+		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModelWithNoTableName());
+		IDataSet dataSet = builder.build();
+		assertArrayEquals(new String[]{"model_with_no_table_name"}, dataSet.getTableNames());
+	}
 }

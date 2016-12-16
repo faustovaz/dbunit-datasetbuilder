@@ -22,6 +22,11 @@ class ModelThree{
 	
 }
 
+@Table
+class ModelWithNoTableName{
+	
+}
+
 class NotAModel{
 	
 }

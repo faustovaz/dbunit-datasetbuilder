@@ -8,6 +8,7 @@ import javax.persistence.Table;
 
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.builder.util.StringUtil;
 
 public class ObjectBasedDataSetBuilder {
 
@@ -26,21 +27,28 @@ public class ObjectBasedDataSetBuilder {
 		return this.build(new DataSetBuilder());
 	}
 	
-	public void ensurePresenceOfTable(Object model) throws DataSetException{
-		if(!isAnnotationPresent(Table.class, model))
-			throw new DataSetException("No Table annotation found in " + model.getClass().getName());
-	}
 	
 	public IDataSet build(DataSetBuilder builder) throws DataSetException{
 		for(Object model : this.models)
-			builder.addDataSet(buildDataSetFor(model));
+			builder.addDataSet(buildDataSetFor(builder, model));
 		return builder.build();
 	}
 	
-	public IDataSet buildDataSetFor(Object model) throws DataSetException{
+	public IDataSet buildDataSetFor(DataSetBuilder builder, Object model) throws DataSetException{
 		ensurePresenceOfTable(model);
-		DataSetBuilder builder = new DataSetBuilder();
-		return builder.newRow(model.getClass().getAnnotation(Table.class).name()).add().build();
+		DataRowBuilder row = builder.newRow(modelName(model));
+		return row.add().build();
+	}
+	
+	public String modelName(Object model) throws DataSetException{
+		ensurePresenceOfTable(model);
+		Table table = model.getClass().getAnnotation(Table.class);
+		return table.name().isEmpty() ? StringUtil.normalizeTableName(model.getClass().getSimpleName()) : table.name();
+	}
+	
+	public void ensurePresenceOfTable(Object model) throws DataSetException{
+		if(!isAnnotationPresent(Table.class, model))
+			throw new DataSetException("No Table annotation found in " + model.getClass().getName());
 	}
 	
 	protected Boolean isAnnotationPresent(Class<? extends Annotation> clazz, Object object){
