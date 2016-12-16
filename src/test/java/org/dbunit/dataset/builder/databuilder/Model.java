@@ -3,30 +3,18 @@ package org.dbunit.dataset.builder.databuilder;
 import javax.persistence.Table;
 
 @Table(name="model")
-public class Model {
-
-}
+public class Model {}
 
 @Table(name="model_one")
-class ModelOne{
-	
-}
+class ModelOne{}
 
 @Table(name="model_two")
-class ModelTwo{
-	
-}
+class ModelTwo{}
 
 @Table(name="model_three")
-class ModelThree{
-	
-}
+class ModelThree{}
 
 @Table
-class ModelWithNoTableName{
-	
-}
+class ModelWithNoTableName{}
 
-class NotAModel{
-	
-}
+class NotAModel{}
