@@ -1,5 +1,6 @@
 package org.dbunit.dataset.builder;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,11 +23,20 @@ public class ObjectBasedDataSetBuilder {
 	}
 	
 	public IDataSet build() throws DataSetException{
+		ensurePresenceOfTable();
 		DataSetBuilder dsBuilder = new DataSetBuilder();
-		for(Object model : this.models){
+		for(Object model : this.models)
 			dsBuilder.newRow(model.getClass().getAnnotation(Table.class).name()).add();
-		}
 		return dsBuilder.build();
 	}
 	
+	public void ensurePresenceOfTable() throws DataSetException{
+		for(Object model : this.models)
+			if(!isAnnotationPresent(Table.class, model))
+				throw new DataSetException("No Table annotation found");
+	}
+	
+	protected Boolean isAnnotationPresent(Class<? extends Annotation> clazz, Object object){
+		return object.getClass().isAnnotationPresent(clazz);
+	}
 }

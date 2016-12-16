@@ -21,3 +21,7 @@ class ModelTwo{
 class ModelThree{
 	
 }
+
+class NotAModel{
+	
+}

@@ -24,5 +24,11 @@ public class ObjectBasedDataSetBuilderTest {
 	}
 	
 	
+	@Test(expected=DataSetException.class)
+	public void ensureExceptionIsThrown() throws DataSetException{
+		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aNotAModel());
+		builder.build();
+	}
+	
 
 }

@@ -25,4 +25,8 @@ public class ModelBuilder {
 		return objects;
 	}
 	
+	public static NotAModel aNotAModel(){
+		return new NotAModel();
+	}
+	
 }
