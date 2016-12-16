@@ -23,17 +23,24 @@ public class ObjectBasedDataSetBuilder {
 	}
 	
 	public IDataSet build() throws DataSetException{
-		ensurePresenceOfTable();
-		DataSetBuilder dsBuilder = new DataSetBuilder();
-		for(Object model : this.models)
-			dsBuilder.newRow(model.getClass().getAnnotation(Table.class).name()).add();
-		return dsBuilder.build();
+		return this.build(new DataSetBuilder());
 	}
 	
-	public void ensurePresenceOfTable() throws DataSetException{
+	public void ensurePresenceOfTable(Object model) throws DataSetException{
+		if(!isAnnotationPresent(Table.class, model))
+			throw new DataSetException("No Table annotation found in " + model.getClass().getName());
+	}
+	
+	public IDataSet build(DataSetBuilder builder) throws DataSetException{
 		for(Object model : this.models)
-			if(!isAnnotationPresent(Table.class, model))
-				throw new DataSetException("No Table annotation found in " + model.getClass().getName());
+			builder.addDataSet(buildDataSetFor(model));
+		return builder.build();
+	}
+	
+	public IDataSet buildDataSetFor(Object model) throws DataSetException{
+		ensurePresenceOfTable(model);
+		DataSetBuilder builder = new DataSetBuilder();
+		return builder.newRow(model.getClass().getAnnotation(Table.class).name()).add().build();
 	}
 	
 	protected Boolean isAnnotationPresent(Class<? extends Annotation> clazz, Object object){
