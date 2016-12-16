@@ -1,10 +1,9 @@
 package org.dbunit.dataset.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.builder.databuilder.Model;
 import org.dbunit.dataset.builder.databuilder.ModelBuilder;
 import org.junit.Test;
 
@@ -12,8 +11,7 @@ public class ObjectBasedDataSetBuilderTest {
 
 	@Test
 	public void ensurePresenceOfATable() throws DataSetException {
-		Model aModel = ModelBuilder.aModel();
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(aModel);
+		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModel());
 		IDataSet dataSet = builder.build();
 		assertArrayEquals(new String[]{"model"}, dataSet.getTableNames());
 	}
