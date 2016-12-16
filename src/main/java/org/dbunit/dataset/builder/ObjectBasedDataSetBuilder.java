@@ -33,7 +33,7 @@ public class ObjectBasedDataSetBuilder {
 	public void ensurePresenceOfTable() throws DataSetException{
 		for(Object model : this.models)
 			if(!isAnnotationPresent(Table.class, model))
-				throw new DataSetException("No Table annotation found");
+				throw new DataSetException("No Table annotation found in " + model.getClass().getName());
 	}
 	
 	protected Boolean isAnnotationPresent(Class<? extends Annotation> clazz, Object object){
