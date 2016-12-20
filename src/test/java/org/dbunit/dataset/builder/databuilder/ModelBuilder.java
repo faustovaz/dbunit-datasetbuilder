@@ -6,7 +6,7 @@ import java.util.Collection;
 public class ModelBuilder {
 
 	public static Model aModel(){
-		return new Model();
+		return new Model(1, "value");
 	}
 	
 	public static ModelTwo aModelTwo(){
