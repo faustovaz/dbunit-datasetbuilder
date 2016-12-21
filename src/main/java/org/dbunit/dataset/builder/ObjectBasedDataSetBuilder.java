@@ -79,30 +79,29 @@ public class ObjectBasedDataSetBuilder {
 	}
 
 	protected Map<String, Object> getColumnDataFromColumnAnnotation(Field field, Object model) throws DataSetException{
-		if(field.isAnnotationPresent(Column.class)){
-			try{
-				Column annotation = ReflectionUtil.getColumnAnnotation(Column.class, field, model);
+		try{
+			Column annotation = ReflectionUtil.getColumnAnnotation(Column.class, field, model);
+			if(annotation != null){
 				field.setAccessible(true);
 				return mapData(	annotation.name(),field.get(model));
 			}
-		
-			catch(Exception e){
-				throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
-			}
+		}
+		catch(Exception e){
+			throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
 		}
 		return new HashMap<String, Object>();
 	}
 	
 	protected Map<String, Object> getColumnDataFromJoinColumnAnnotation(Field field, Object model) throws DataSetException{
-		if(field.isAnnotationPresent(JoinColumn.class)){
-			try{
-				JoinColumn annotation = ReflectionUtil.getColumnAnnotation(JoinColumn.class, field, model);
+		try{
+			JoinColumn annotation = ReflectionUtil.getColumnAnnotation(JoinColumn.class, field, model);
+			if(field.isAnnotationPresent(JoinColumn.class)){
 				field.setAccessible(true);
 				return mapData(	annotation.name(),field.get(model));
 			}
-			catch(Exception e){
-				throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
-			}
+		}
+		catch(Exception e){
+			throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
 		}
 		return new HashMap<String, Object>();
 	}

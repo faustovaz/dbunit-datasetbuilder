@@ -19,7 +19,30 @@ public class Model {
 }
 
 @Table(name="model_one")
-class ModelOne{}
+class ModelOne{
+	private int id;
+	private String value;
+	
+	public ModelOne(int id, String value) {
+		this.id = id;
+		this.value = value;
+	}
+	
+	@Column(name="id_model")
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	@Column(name="model_value")
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}
+}
 
 @Table(name="model_two")
 class ModelTwo{}

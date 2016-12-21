@@ -9,6 +9,10 @@ public class ModelBuilder {
 		return new Model(1, "value");
 	}
 	
+	public static ModelOne aAnnotedMethodModel(){
+		return new ModelOne(1, "value");
+	}
+	
 	public static ModelTwo aModelTwo(){
 		return new ModelTwo();
 	}

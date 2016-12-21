@@ -46,7 +46,8 @@ public class ObjectBasedDataSetBuilderTest {
 		List<String> columnsNames = new ArrayList<String>();
 		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModel());
 		Column[] columns = builder.build().getTableMetaData("model").getColumns();
-		for(Column column : columns) columnsNames.add(column.getColumnName());
+		for(Column column : columns) 
+			columnsNames.add(column.getColumnName());
 		assertArrayEquals(new String[]{"id_model", "model_value"}, columnsNames.toArray());
 	}
 	
@@ -57,5 +58,15 @@ public class ObjectBasedDataSetBuilderTest {
 		assertEquals(1, table.getRowCount());
 		assertEquals(1, table.getValue(0, "id_model"));
 		assertEquals("value", table.getValue(0, "model_value"));
+	}
+	
+	@Test
+	public void ensurePresenceAnnotatedMethodValues() throws DataSetException{
+		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aAnnotedMethodModel());
+		ITable table = builder.build().getTable("model_one");
+		assertEquals(1, table.getRowCount());
+		assertEquals(1, table.getValue(0, "id_model"));
+		assertEquals("value", table.getValue(0, "model_value"));
+
 	}
 }
