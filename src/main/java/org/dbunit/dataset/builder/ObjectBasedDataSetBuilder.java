@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.builder.util.ReflectionUtil;
 import org.dbunit.dataset.builder.util.StringUtil;
 
 public class ObjectBasedDataSetBuilder {
@@ -53,44 +55,63 @@ public class ObjectBasedDataSetBuilder {
 	}
 	
 	public DataRowBuilder modelRow(DataRowBuilder row, Object model) throws DataSetException{
-		row = mapFieldsWithColumnAnnotation(row, model);
-		row = mapFieldsWithJoinColumnAnnotation(row, model);
+		row = mapFieldsWith(Column.class, row, model);
+		row = mapFieldsWith(JoinColumn.class, row, model);
 		return row;
 	}
 	
-	public DataRowBuilder mapFieldsWithColumnAnnotation(DataRowBuilder row, Object model) throws DataSetException{
+	public DataRowBuilder mapFieldsWith(Class<? extends Annotation> annotationClass, DataRowBuilder row, Object model) throws DataSetException{
 		Field[] fields = model.getClass().getDeclaredFields();
 		for(Field field : fields){
-			Map<String, Object> columnData = getColumnDataFrom(field, model);
-			row.with((String) columnData.get(COLUMN_NAME), columnData.get(COLUMN_VALUE));
+			Map<String, Object> columnData = getColumnDataFrom(annotationClass, field, model);
+			if(!columnData.isEmpty())
+				row.with((String) columnData.get(COLUMN_NAME), columnData.get(COLUMN_VALUE));
 		}
 		return row;
 	}
 	
-	protected Map<String, Object> getColumnDataFrom(Field field, Object model) throws DataSetException{
-		Map<String, Object> data = new HashMap<String, Object>();
-		try{
-			Column annotation = getColumnAnnotation(field, model);
-			field.setAccessible(true);
-			data.put(COLUMN_NAME, annotation.name());
-			data.put(COLUMN_VALUE, field.get(model));
+	protected Map<String, Object> getColumnDataFrom(Class<? extends Annotation> annotationClass, Field field, Object model) throws DataSetException{
+		if(annotationClass.equals(Column.class))
+			return getColumnDataFromColumnAnnotation(field, model);
+		if(annotationClass.equals(JoinColumn.class))
+			return getColumnDataFromJoinColumnAnnotation(field, model);
+		return new HashMap<String, Object>();
+	}
+
+	protected Map<String, Object> getColumnDataFromColumnAnnotation(Field field, Object model) throws DataSetException{
+		if(field.isAnnotationPresent(Column.class)){
+			try{
+				Column annotation = ReflectionUtil.getColumnAnnotation(Column.class, field, model);
+				field.setAccessible(true);
+				return mapData(	annotation.name(),field.get(model));
+			}
+		
+			catch(Exception e){
+				throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
+			}
 		}
-		catch(Exception e){
-			throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
-		}
-		return data;
+		return new HashMap<String, Object>();
 	}
 	
-	public Column getColumnAnnotation(Field field, Object model) throws SecurityException, NoSuchMethodException{
-		Column annotation = field.getAnnotation(Column.class);
-		if(annotation == null){
-			model.getClass().getMethod("get" + field.getName(), new Class<?>[]{});
+	protected Map<String, Object> getColumnDataFromJoinColumnAnnotation(Field field, Object model) throws DataSetException{
+		if(field.isAnnotationPresent(JoinColumn.class)){
+			try{
+				JoinColumn annotation = ReflectionUtil.getColumnAnnotation(JoinColumn.class, field, model);
+				field.setAccessible(true);
+				return mapData(	annotation.name(),field.get(model));
+			}
+			catch(Exception e){
+				throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
+			}
 		}
-		return annotation;
+		return new HashMap<String, Object>();
 	}
 	
-	public DataRowBuilder mapFieldsWithJoinColumnAnnotation(DataRowBuilder row, Object model){
-		return row;
+	protected Map<String, Object> mapData(String key, Object value){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(COLUMN_NAME, key);
+		map.put(COLUMN_VALUE, value);
+		return map;
 	}
 	
 	public void ensurePresenceOfTable(Object model) throws DataSetException{
