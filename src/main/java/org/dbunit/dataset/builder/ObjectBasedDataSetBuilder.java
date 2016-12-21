@@ -1,5 +1,6 @@
 package org.dbunit.dataset.builder;
 
+import java.beans.IntrospectionException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -81,36 +82,38 @@ public class ObjectBasedDataSetBuilder {
 	protected Map<String, Object> getColumnDataFromColumnAnnotation(Field field, Object model) throws DataSetException{
 		try{
 			Column annotation = ReflectionUtil.getColumnAnnotation(Column.class, field, model);
-			if(annotation != null){
-				field.setAccessible(true);
-				return mapData(	annotation.name(),field.get(model));
-			}
+			if(annotation != null)
+				return mapData(annotation.name(), field, model);
+			return new HashMap<String, Object>();			
 		}
-		catch(Exception e){
-			throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
+		catch(IntrospectionException e){
+			throw new DataSetException("Error trying to get Column annotation of" + field.getName() + " from " + model.getClass().getName(), e.getCause());
 		}
-		return new HashMap<String, Object>();
 	}
 	
 	protected Map<String, Object> getColumnDataFromJoinColumnAnnotation(Field field, Object model) throws DataSetException{
 		try{
 			JoinColumn annotation = ReflectionUtil.getColumnAnnotation(JoinColumn.class, field, model);
-			if(field.isAnnotationPresent(JoinColumn.class)){
-				field.setAccessible(true);
-				return mapData(	annotation.name(),field.get(model));
-			}
+			if(annotation != null)
+				return mapData(annotation.name(), field, model);
+			return new HashMap<String, Object>();			
+		}
+		catch(IntrospectionException e){
+			throw new DataSetException("Error trying to get JoinColumn annotation of" + field.getName() + " from " + model.getClass().getName(), e.getCause());
+		}
+	}
+	
+	protected Map<String, Object> mapData(String columnName, Field field, Object model) throws DataSetException{
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		try{
+			field.setAccessible(true);
+			map.put(COLUMN_NAME, columnName);
+			map.put(COLUMN_VALUE, field.get(model));			
+			return map;
 		}
 		catch(Exception e){
 			throw new DataSetException("Error trying to map " + field.getName() + " from " + model.getClass().getName(), e.getCause());
 		}
-		return new HashMap<String, Object>();
-	}
-	
-	protected Map<String, Object> mapData(String key, Object value){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put(COLUMN_NAME, key);
-		map.put(COLUMN_VALUE, value);
-		return map;
 	}
 	
 	public void ensurePresenceOfTable(Object model) throws DataSetException{
