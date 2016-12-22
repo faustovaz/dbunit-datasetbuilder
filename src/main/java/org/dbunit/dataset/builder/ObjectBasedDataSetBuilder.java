@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
@@ -94,9 +95,15 @@ public class ObjectBasedDataSetBuilder {
 	protected Map<String, Object> getColumnDataFromJoinColumnAnnotation(Field field, Object model) throws DataSetException{
 		try{
 			JoinColumn annotation = ReflectionUtil.getColumnAnnotation(JoinColumn.class, field, model);
-			if(annotation != null)
-				return mapData(annotation.name(), field, model);
+			field.setAccessible(true);
+			Object object = field.get(model);
+			Field idAnnotatedField = ReflectionUtil.getFieldWith(Id.class, object);
+			if((annotation != null) && (idAnnotatedField != null))
+				return mapData(annotation.name(), idAnnotatedField, object);
 			return new HashMap<String, Object>();			
+		}
+		catch(IllegalAccessException iae){
+			throw new DataSetException("Error trying to get JoinColumn annotation of" + field.getName() + " from " + model.getClass().getName(), iae.getCause());
 		}
 		catch(IntrospectionException e){
 			throw new DataSetException("Error trying to get JoinColumn annotation of" + field.getName() + " from " + model.getClass().getName(), e.getCause());

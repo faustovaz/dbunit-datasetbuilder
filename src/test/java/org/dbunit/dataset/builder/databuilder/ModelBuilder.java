@@ -37,4 +37,8 @@ public class ModelBuilder {
 		return new ModelWithNoTableName();
 	}
 	
+	public static ModelWithJoinColumn aModelWithJoinColumn(){
+		return new ModelWithJoinColumn(1, "value", aModel());
+	}
+	
 }

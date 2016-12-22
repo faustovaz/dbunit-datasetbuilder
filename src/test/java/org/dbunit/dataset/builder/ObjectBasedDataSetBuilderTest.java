@@ -61,12 +61,21 @@ public class ObjectBasedDataSetBuilderTest {
 	}
 	
 	@Test
-	public void ensurePresenceAnnotatedMethodValues() throws DataSetException{
+	public void ensurePresenceOfAnnotatedMethodValues() throws DataSetException{
 		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aAnnotedMethodModel());
 		ITable table = builder.build().getTable("model_one");
 		assertEquals(1, table.getRowCount());
 		assertEquals(1, table.getValue(0, "id_model"));
 		assertEquals("value", table.getValue(0, "model_value"));
-
+	}
+	
+	@Test
+	public void ensureJoinColumnAreMapped() throws DataSetException{
+		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModelWithJoinColumn());
+		ITable table = builder.build().getTable("model_with_join_column");
+		assertEquals(1, table.getRowCount());
+		assertEquals(1, table.getValue(0, "id_model"));
+		assertEquals("value", table.getValue(0, "model_value"));
+		assertEquals(1, table.getValue(0, "another_model_id"));
 	}
 }
