@@ -6,6 +6,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 public class ReflectionUtil {
 
@@ -22,4 +24,13 @@ public class ReflectionUtil {
 		return annotation;
 	}
 	
+	public static Field getFieldWith(Class<? extends Annotation> annotation, Object model){
+		Field[] fields = model.getClass().getDeclaredFields();
+		List<Field> allFields = Arrays.asList(fields);
+		for(Field field : allFields){
+			if(field.isAnnotationPresent(annotation))
+				return field;
+		}
+		return null;
+	}
 }
