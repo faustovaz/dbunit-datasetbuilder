@@ -68,6 +68,9 @@ class ModelWithJoinColumn{
 	@JoinColumn(name="another_model_id")
 	private Model model;
 	
+	@JoinColumn(name="id_model_one")
+	private ModelOne modelOne;
+	
 	public ModelWithJoinColumn(Integer id, String value, Model model) {
 		this.id = id;
 		this.value = value;
@@ -96,5 +99,13 @@ class ModelWithJoinColumn{
 
 	public void setModel(Model model) {
 		this.model = model;
+	}
+
+	public ModelOne getModelOne() {
+		return modelOne;
+	}
+
+	public void setModelOne(ModelOne modelOne) {
+		this.modelOne = modelOne;
 	}
 }
