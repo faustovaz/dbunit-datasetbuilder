@@ -18,18 +18,18 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.builder.util.ReflectionUtil;
 import org.dbunit.dataset.builder.util.StringUtil;
 
-public class ObjectBasedDataSetBuilder {
+public class JPAEntityBasedDataSetBuilder {
 
 	private Collection<Object> models;
 	public final String COLUMN_NAME = "COLUMN_NAME";
 	public final String COLUMN_VALUE = "COLUMN_VALUE";
 	
-	public ObjectBasedDataSetBuilder(Object object){
+	public JPAEntityBasedDataSetBuilder(Object object){
 		this.models = new ArrayList<Object>();
 		this.models.add(object);
 	}
 	
-	public ObjectBasedDataSetBuilder(Collection<Object> objects){
+	public JPAEntityBasedDataSetBuilder(Collection<Object> objects){
 		this.models = objects;
 	}
 	

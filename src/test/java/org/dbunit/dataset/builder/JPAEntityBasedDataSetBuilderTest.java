@@ -12,31 +12,31 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.builder.databuilder.ModelBuilder;
 import org.junit.Test;
 
-public class ObjectBasedDataSetBuilderTest {
+public class JPAEntityBasedDataSetBuilderTest {
 
 	@Test
 	public void ensurePresenceOfATable() throws DataSetException {
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModel());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aModel());
 		IDataSet dataSet = builder.build();
 		assertArrayEquals(new String[]{"model"}, dataSet.getTableNames());
 	}
 	
 	@Test
 	public void ensurePresenceOfTables() throws DataSetException{
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.threeModels());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.threeModels());
 		IDataSet dataSet = builder.build();
 		assertArrayEquals(new String[]{"model", "model_two", "model_three"}, dataSet.getTableNames());
 	}
 	
 	@Test(expected=DataSetException.class)
 	public void ensureExceptionIsThrown() throws DataSetException{
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aNotAModel());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aNotAModel());
 		builder.build();
 	}
 	
 	@Test
 	public void ensurePresenceOfTableName() throws DataSetException{
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModelWithNoTableName());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aModelWithNoTableName());
 		IDataSet dataSet = builder.build();
 		assertArrayEquals(new String[]{"model_with_no_table_name"}, dataSet.getTableNames());
 	}
@@ -44,7 +44,7 @@ public class ObjectBasedDataSetBuilderTest {
 	@Test
 	public void ensurePresenceOfColumns() throws DataSetException{
 		List<String> columnsNames = new ArrayList<String>();
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModel());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aModel());
 		Column[] columns = builder.build().getTableMetaData("model").getColumns();
 		for(Column column : columns) 
 			columnsNames.add(column.getColumnName());
@@ -53,7 +53,7 @@ public class ObjectBasedDataSetBuilderTest {
 	
 	@Test
 	public void ensurePresenceOfColumnsAndValues() throws DataSetException{
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModel());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aModel());
 		ITable table = builder.build().getTable("model");
 		assertEquals(1, table.getRowCount());
 		assertEquals(1, table.getValue(0, "id_model"));
@@ -62,7 +62,7 @@ public class ObjectBasedDataSetBuilderTest {
 	
 	@Test
 	public void ensurePresenceOfAnnotatedMethodValues() throws DataSetException{
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aAnnotedMethodModel());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aAnnotedMethodModel());
 		ITable table = builder.build().getTable("model_one");
 		assertEquals(1, table.getRowCount());
 		assertEquals(1, table.getValue(0, "id_model"));
@@ -71,7 +71,7 @@ public class ObjectBasedDataSetBuilderTest {
 	
 	@Test
 	public void ensureJoinColumnAreMapped() throws DataSetException{
-		ObjectBasedDataSetBuilder builder = new ObjectBasedDataSetBuilder(ModelBuilder.aModelWithJoinColumn());
+		JPAEntityBasedDataSetBuilder builder = new JPAEntityBasedDataSetBuilder(ModelBuilder.aModelWithJoinColumn());
 		ITable table = builder.build().getTable("model_with_join_column");
 		assertEquals(1, table.getRowCount());
 		assertEquals(1, table.getValue(0, "id_model"));
