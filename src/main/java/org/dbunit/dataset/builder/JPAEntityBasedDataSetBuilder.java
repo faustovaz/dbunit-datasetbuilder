@@ -53,7 +53,9 @@ public class JPAEntityBasedDataSetBuilder {
 	public String modelName(Object model) throws DataSetException{
 		ensurePresenceOfTable(model);
 		Table table = model.getClass().getAnnotation(Table.class);
-		return table.name().isEmpty() ? StringUtil.normalizeTableName(model.getClass().getSimpleName()) : table.name();
+		String tableName = table.name().isEmpty() ? StringUtil.normalizeTableName(model.getClass().getSimpleName()) : table.name(); 
+		return table.schema().isEmpty() ? tableName : table.schema() + "." + tableName;
+			
 	}
 	
 	public DataRowBuilder modelRow(DataRowBuilder row, Object model) throws DataSetException{
